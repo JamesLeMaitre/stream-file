@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -86,85 +84,25 @@ public class FileService implements FileInterface {
         });
     }
 
-    public Mono<Void> renameAndMoveFilesInFolder(String newNamePrefix) {
+    public Mono<Void> renameAndMoveFilesInFolder() {
         String folderPath = JavaUtiles.USER_PATH+"/user/images";
-        //String newNamePrefix = "1__M_Left_middle_finger";
+        String newNamePrefix = "1__M_Left_middle_finger";
         //String destinationFolder = JavaUtiles.USER_PATH+"/user/rename/";
-//        Path sourcePath = Paths.get(filePath);
-//        Path targetPath = Paths.get(destinationFolder + "/" + sourcePath.getFileName());
-//        try {
-//            Files.copy(sourcePath, targetPath);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return Mono.fromRunnable(() -> {
 
-      return Mono.fromRunnable(() -> {
-            File dest = new File(JavaUtiles.USER_PATH+"/user/rename");
+        return Mono.fromRunnable(() -> {
+            File folder = new File(folderPath);
+            File dest = new File(JavaUtiles.USER_PATH+"/user/rename/");
             if (!dest.exists()) {
                 dest.mkdirs();
             }
-            Path sourcePath = Paths.get(folderPath);
-            String fileName = sourcePath.getFileName().toString();
-//          System.out.println(fileName);
-          log.info("This is a file Name {}",fileName);
-            String extension = fileName.substring(fileName.lastIndexOf("."));
-          log.info("This is an extension {}",extension);
-            Path targetPath = Paths.get(dest + "/" + newNamePrefix + extension);
-
-        }).doOnNext(r->{
-
-      }).then();
-//    }
-//            return Mono.fromRunnable(() -> {
-//                File folder = new File(folderPath);
-//                File dest = new File(JavaUtiles.USER_PATH+"/user/rename");
-//                if (!dest.exists()) {
-//                    dest.mkdirs();
-//                }
-//                Path sourcePath = Paths.get(folderPath);
-//                String fileName = sourcePath.getFileName().toString();
-//                String extension = fileName.substring(fileName.lastIndexOf("."));
-//                Path targetPath = Paths.get(dest + "/" + newNamePrefix + extension);
-//                try {
-//                    Files.copy(sourcePath, targetPath);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            });
-//        };
-//            for (File file : Objects.requireNonNull(folder.listFiles())) {
-//                if (file.isFile()) {
-//                    String fileName = file.getName();
-//                    File newFile = new File(dest + "/" + newNamePrefix);
-//                    file.renameTo(newFile);
-//                    try {
-//                        Files.copy(newFile.toPath(), dest.toPath());
-//                    } catch (IOException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                    log.info("{}",file);
-//                }
-//            }
-//        });
-    }
-
-    public Mono<Void> copyAndRenameFileIfExist(String filePath, String newName, String destinationFolder) {
-        return Mono.fromRunnable(() -> {
-            Path sourcePath = Paths.get(filePath);
-            String fileName = sourcePath.getFileName().toString();
-            String extension = fileName.substring(fileName.lastIndexOf("."));
-            Path targetPath = Paths.get(destinationFolder + "/" + newName + extension);
-            if (Files.exists(targetPath)) {
-                // target file already exists, you can choose to overwrite it or give it a different name
-                // for example, you can add a timestamp to the new name
-                String newFileName = newName + "_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + extension;
-                targetPath = Paths.get(destinationFolder + "/" + newFileName);
-            }
-            try {
-                Files.copy(sourcePath, targetPath);
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (File file : folder.listFiles()) {
+                if (file.isFile()) {
+                    String fileName = file.getName();
+                    String newFileName = newNamePrefix + fileName;
+                    File newFile = new File(dest + "/" + newFileName);
+                    file.renameTo(newFile);
+                    log.info("{}",file);
+                }
             }
         });
     }

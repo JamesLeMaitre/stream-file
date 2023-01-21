@@ -1,10 +1,8 @@
 package com.esmcgie.fingerprintapi.controller;
 
-import com.esmcgie.fingerprintapi.request.FileRequest;
 import com.esmcgie.fingerprintapi.service.FileService;
 import com.esmcgie.fingerprintapi.utiles.DataFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -61,14 +59,9 @@ public class FileController extends DataFormatter<String> {
         }
     }
 
-    @PutMapping("/renameAndMove/{newNamePrefix}")
-    public Mono<Void> renameAndMoveFilesInFolder(@PathVariable String newNamePrefix) {
-        return fileService.renameAndMoveFilesInFolder(newNamePrefix);
-    }
-
-    @PutMapping("/copy-rename-if-exist")
-    public Mono<Void> copyAndRenameFileIfExist(@Validated @RequestBody FileRequest f) {
-        return fileService.copyAndRenameFileIfExist(f.getFilePath(), f.getNewName(), f.getDestinationFolder());
+    @PutMapping("/renameAndMove")
+    public Mono<Void> renameAndMoveFilesInFolder() {
+        return fileService.renameAndMoveFilesInFolder();
     }
 }
 
